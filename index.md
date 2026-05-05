@@ -1,0 +1,130 @@
+---
+layout: default
+title: CrankGPT — crankable voice AI in your hands
+description: How we built a fully offline, hand-crank powered voice assistant on a Raspberry Pi 5.
+---
+
+![CrankGPT, a red metal box with a hand crank, voltmeter and OLED display](pics/IMG_2672.jpg)
+
+
+CrankGPT is a fully offline voice assistant in a red metal box. There's no battery, no Wi-Fi, no cloud — just a hand crank, a Raspberry Pi 5, and a small stack of speech and language models running locally. Turn the crank, ask a question, get an answer ... and the reward of some exercise.
+
+This article walks through how we built it: the hardware, the local voice agent stack, and the engineering required to make a real conversation feel real on a device this small.
+
+## Why?
+
+Because every voice assistant on the market assumes a wall socket and a data center. CrankGPT is a small argument that neither has to be true. The model is in your hand. The power is in your arm. The latency is in your wrist.
+
+Start cranking.
+
+
+## Hardware
+
+### Raspberry Pi 5
+
+The brain is a stock Raspberry Pi 5 with 8GB RAM. We chose it for accessibility and software ecosystem, but as we'll discuss later, an Orange Pi with it's faster DDR5 RAM would have been a better fit for LLM inference. The Pi runs everything locally on CPU (no acccelerators): speech recognition, the language model, and text-to-speech.
+
+### Audio
+
+For audio I/O we use the [KEYESTUDIO ReSpeaker 2-Mic Pi HAT](https://www.amazon.com/dp/B07H3T8SQY): a stereo MEMS mic array with a WM8960 codec. It sits directly on the Pi's GPIO header and gives us decent far-field pickup, while actually being positioned inside the box. (More on the "inside the box" problem later.)
+
+### Power
+
+Power comes from an off-the-shelf [20W hand-crank generator](https://www.amazon.com/dp/B0F52VY4KF). This is widely available consumer product marketed for emergency USB charging. It can natively output 3 - 15V.
+
+Hand cranking is naturally bursty. And a Raspberry Pi is notoriously picky about it's power input and will brown out when the voltage falls below 4.9V or exceeds 5.2V.  Hence, we added a small custom board with a bank of capacitors that smooths the input and acts as a short-term reservoir. It buys us enough headroom to ride out the spikes when the full inference stack kicks in and allows the user to not needing to crank for up to 15 seconds.
+
+> *TODO: insert circuit diagram and components list. check voltage numbers*
+
+**Power numbers:**
+- ~5V supply
+- 0.8A idle, ~3A peak under load
+
+You can *feel* that load curve through the crank: when LLM inference and speech synthesis run together, you'll sweat more! Compute becomes a tactile experience.
+
+## Software
+
+### Operating system
+
+The OS is [DietPi](https://dietpi.com/) — a minimalistic, stripped-down Debian-based image. We picked it for fast boot time and for the absence of services we don't need. Turning off unneeded radio services (bluetooth, wifi etc) reduced boot up even further: From power-on to a usable userspace in around 3 seconds. 
+
+### Voice Agent
+
+We wrote our own [edge voice agent](https://github.com/ktomanek/edge_voice_agent) optimized for running on RPI-like boards. Motivation for building this from scratch as opposted to building on top of existing frameworks (like eg Pipecat): we wanted to actually understand the system end-to-end, and we wanted minimal dependencies on a device with limited memory. The pipeline is the obvious one — ASR + VAD → LLM → TTS — but every stage is tuned for latency on CPU.
+
+### Speech recognition
+
+[Moonshine](https://github.com/usefulsensors/moonshine) ASR turned out to be [by far the fasted option](https://github.com/ktomanek/captioning#results) for CPU-based ASR. While being slightly less robust in noisy environments (not irrelevant in our scenario) and for accented speech compare to eg Whisper base-sized models or Nvidia's fastconformer models, we optimized for low latency as we aimed for sub-1 sec response time of our local voice agent (see more below). For endpointing, we use [Silero VAD](https://github.com/snakers4/silero-vad).
+
+### Language model(s)
+
+The LLM runs on [llama.cpp](https://github.com/ggerganov/llama.cpp). Our preferred models are the small (eg 350m or 1.2b) [Liquid AI LFM2](https://www.liquid.ai/blog/liquid-foundation-models-v2-our-second-series-of-generative-ai-models) models as well as [Gemma 3](https://deepmind.google/models/gemma/gemma-3/) in its 1b variant (Q4_0 quant working very well here).
+
+With auto regressive decoding, the token generation step of our LLMs is probably the biggest bottleneck of our system. It is also the step that is most memory constrained. This can be very well seen when benchmarking botht the prompt prefill and token generation rates on a Raspberry Pi 5 (DDR4 RAM) vs an Orange Pi 5 (DDR5 RAM).
+
+> *TODO: prompt-processing and tok/s numbers, time-to-first-token. add info on gemma as well. Also add a word on quants*
+
+### Text-to-speech
+
+While there is an ever growing list of well sounding, CPU-runnable voice models, most just don't run in real-time on a Raspberry Pi's CPU. [Kokoro](https://github.com/hexgrad/kokoro), [KittenML](https://github.com/KittenML/KittenTTS), [PocketTTS](https://huggingface.co/kyutai/pocket-tts) and [Piper](https://github.com/OHF-Voice/piper1-gpl) are the likely contenders for low resource edge processing. Piper wins with a large margin when it comes to latency and generation speed. [Concretely](https://github.com/ktomanek/edge_tts_comparison#non-streaming), on a Raspberry Pi 5, Piper synthesizes our 20-word test utterance in about 0.50s, while Kokoro is about 9 times slower.  And while PocketTTS allows for streaming — which does significantly reduce time-to-first-audio-chunk — [we're still facing an RTF > 1.0 on a Raspberry Pi and frequent stuttering is audible](https://github.com/ktomanek/edge_tts_comparison#streaming). Piper's headroom is what lets it keep up with streaming LLM output in a real conversation; the others can't.
+
+We stream the LLM's output sentence-by-sentence into Piper. To prevent pauses during generation, we limit the maximum sentence length. For the first sentence, we more aggressively restrict its length. That gets speech started as fast as possible without forcing the model to pre-commit to a short answer overall. The user hears the first words quickly, and the model keeps generating in the background while playback catches up.
+
+### Runtime
+
+All components run on ONNX Runtime, PyTorch dependencies (lingering in some components which not technically required) were removed, to safe RAM but also import time at startup. PyTorch's import time alone costs several seconds of cold start.
+
+## Putting it together
+
+
+### Startup Time
+
+From the moment you start cranking to the moment CrankGPT can answer is about 30 seconds. Startup time includes:
+
+- **~10–15s** — Pi 5 cold boot through full firmware sequence
+- **~3s** — Linux boot to userspace (DietPi)
+- **10-15s** — Voice Agent startup (python imports, load model weights)
+
+
+Even with all the obvious optimizations — BOOT_DELAY=0, splash disabled, unused boot sources removed, fastest available SD card — the Pi 5's pre-Linux stage still costs us ~10–15 seconds. Unlike the Pi 4, the Pi 5 runs a much more PC-like firmware sequence (PMIC ramp, RP1 init, PCIe/USB enumeration via the EEPROM bootloader) before it ever loads a kernel, and that floor is hard to break through from userland. And unfortunately, Pi 5 doesn't allow for a sleep mode/DRAM preservation.
+
+During voice agent startup, the noticeably slow part is actually Python imports on first run. We tried the obvious fixes and none of them helped meaningfully. Precompiling bytecode (`compileall`) was a no-op — Python already caches `.pyc` files automatically, so there was nothing left to compile on a warm install. Lazy imports trimmed a few hundred milliseconds at best; the bulk of cold-start time isn't in our code, it's in `dlopen`-ing large shared libraries (ONNX Runtime in particular) and in hundreds of small random reads off the SD card as Python walks the import graph. Warming the page cache after boot helped only marginally — because for the first invocation the page cache *is* cold by definition.
+
+NVMe was the most surprising dead end. Faster random reads should have been a clear win, but on the Pi 5 the EEPROM bootloader has to enumerate PCIe and load the NVMe controller's firmware before it can boot, adding roughly 10 seconds to the pre-Linux stage. We gained at runtime what we lost at boot, and then some. For our use case — cold start every session — SD card ended up being faster end-to-end.
+
+So, to reduce startup time further, dropping Python part and replacing with a C (or Rust) version of the agent gue could probably safe another ~5s startup time.
+
+
+### Latency Measurements
+
+TODO: discuss TTFB (time to first byte) for voice agent responses
+
+
+
+
+### Practical Power Needs
+
+Below we show examples of the power drawn by CrankGPT in different scenarios. Voltage stays at roughly 5V across the board — the Pi is picky about its supply rail and the cap-bank regulator keeps it pinned there — so the interesting variable is current:
+
+| Scenario              | Voltage | Current | Power  |
+| --------------------- | ------- | ------- | ------ |
+| Idle                  | ~5 V    | ~0.8 A  | ~4 W   |
+| ASR (Moonshine)       | ~5 V    | ~1.6 A  | ~8 W   |
+| LLM + TTS inference   | ~5 V    | ~3 A    | ~15 W  |
+
+
+> *TODO: get precise measurements*
+
+
+
+## What we'd do differently
+
+The single biggest hardware regret is the Pi 5 itself. An Orange Pi 5 (or similar) would have given us more RAM at a similar price point, which directly translates to a larger model and better answers. The Pi's ecosystem advantage is real, but for a single-purpose appliance like this, RAM matters more than community.
+
+Acoustically, putting the mic *inside* the box was a mistake we knew we were making. The enclosure rings, the crank introduces mechanical noise, and the mic picks up both. A better build would isolate the mic acoustically — or just put it outside.
+
+
+
+## Happy Cranking
+
+![CrankGPT, top view](pics/IMG_2673.jpg)
