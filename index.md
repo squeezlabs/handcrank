@@ -60,9 +60,26 @@ We wrote our own [edge voice agent](https://github.com/ktomanek/edge_voice_agent
 
 The LLM runs on [llama.cpp](https://github.com/ggerganov/llama.cpp). Our preferred models are the small (eg 350m or 1.2b) [Liquid AI LFM2](https://www.liquid.ai/blog/liquid-foundation-models-v2-our-second-series-of-generative-ai-models) models as well as [Gemma 3](https://deepmind.google/models/gemma/gemma-3/) in its 1b variant (Q4_0 quant working very well here).
 
-With auto regressive decoding, the token generation step of our LLMs is probably the biggest bottleneck of our system. It is also the step that is most memory constrained. This can be very well seen when benchmarking botht the prompt prefill and token generation rates on a Raspberry Pi 5 (DDR4 RAM) vs an Orange Pi 5 (DDR5 RAM).
+Measured using llama.cpp (llama-bench with pp512 and tg128, 4 threads each)
 
-> *TODO: prompt-processing and tok/s numbers, time-to-first-token. add info on gemma as well. Also add a word on quants*
+| model | quant | memory | prefill t/s | gen t/s | 
+| ----- | ----- | -----  | -----  | ----- |
+| lfm2.5 350M |  Q4_K_M | 354.48 MiB | 222.65 ± 1.09 | 48.86 ± 0.02 |
+| lfm2.5 1.2B |  Q4_K_M | 762.49 MiB | 71.31 ± 0.04 | 15.01 ± 0.01 |
+| gemma3 1B |  Q4_K_M | 762.49 MiB | 46.12 ± 0.01 | 14.31 ± 0.01 |
+
+
+With auto regressive decoding, the token generation step of our LLMs is the biggest bottleneck of the whole system. It is also the step that is most memory constrained. This can be very well seen when benchmarking both the prompt prefill and token generation rates on a Raspberry Pi 5 (DDR4 RAM) vs an Orange Pi 5 Pro (DDR5 RAM). (Note: on the Orange Pi 5 Pro we ensured only the 4 performance cores are used for comparability).
+
+| model | quant | memory | prefill t/s | gen t/s | gen speedup of OPI over Pi 5 |
+| ----- | ----- | -----  | -----  | ----- | ----- |
+| lfm2.5 350M |  Q4_K_M | 354.48 MiB | 221.46 ± 0.27 | 73.03 ± 2.34 | **+49%** |
+| lfm2.5 1.2B |  Q4_K_M | 762.49 MiB | 67.68 ± 0.99 | 23.79 ± 0.20 | **+58%** |
+| gemma3 1B |  Q4_K_M | 762.49 MiB | 39.47 ± 0.30 | 18.43 ± 0.58 | **+29%** |
+
+Generation rates jump 30–60% on the Orange Pi 5 Pro despite identical model, quant, and thread count — a clean illustration that on small LLMs at this scale, memory bandwidth (DDR5 vs DDR4) is the binding constraint, not raw compute. Prefill rates barely move, because prefill is compute-bound; generation is bandwidth-bound.
+
+Most larger LLMs, even those that claim to be optimized for edge devices, will run too slowly on a Raspberry Pi 5, with generation speeds significantly below 10 tok/sec (eg Qwen3.5 2b with 7.8 tok/sec). This would lead to a significant and disrupting increase in latency and TTFB.
 
 ### Text-to-speech
 
@@ -97,8 +114,13 @@ So, to reduce startup time further, dropping Python part and replacing with a C 
 
 ### Latency Measurements
 
-TODO: discuss TTFB (time to first byte) for voice agent responses
+The choice of LLM with its respective tok/sec generation profile mostly impacts the time-to-first-byte (TTFB) we observe here. Below are some measurements from a standard conversation, averaging the TTFB over all turns:
 
+| LLM used              | TTFB  |
+| --------------------- | ------- |
+| Gemma3 1b             | ~2.9 sec |
+| LFM2.5 1.2b           | ~1.5 sec|
+| LFM2.5 350m           | ~0.8 sec|
 
 
 
@@ -116,12 +138,6 @@ Below we show examples of the power drawn by CrankGPT in different scenarios. Vo
 > *TODO: get precise measurements*
 
 
-
-## What we'd do differently
-
-The single biggest hardware regret is the Pi 5 itself. An Orange Pi 5 (or similar) would have given us more RAM at a similar price point, which directly translates to a larger model and better answers. The Pi's ecosystem advantage is real, but for a single-purpose appliance like this, RAM matters more than community.
-
-Acoustically, putting the mic *inside* the box was a mistake we knew we were making. The enclosure rings, the crank introduces mechanical noise, and the mic picks up both. A better build would isolate the mic acoustically — or just put it outside.
 
 
 
