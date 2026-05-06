@@ -9,13 +9,15 @@ description: How we built a fully offline, hand-crank powered voice assistant on
 
 CrankGPT is your fully offline and off-the-grid voice assistant. There's no battery, no Wi-Fi, no cloud — just a hand crank, a Raspberry Pi 5, and a small stack of speech and language models running locally. Turn the crank, ask a question, get an answer ... and the reward of some exercise.
 
-This article walks through how we built it: the hardware, the local voice agent stack, and the engineering required to make a real conversation feel real on a device this small.
+This article walks through how we built it: the hardware, the local voice agent stack, and the engineering required to **make a conversation feel real on a device this small**.
 
 ## Why?
 
 Because every voice assistant on the market assumes a wall socket and a data center. CrankGPT is a small argument that neither has to be true. The model is in your hand. The power is in your arm. The latency is in your wrist.
 
 Start cranking.
+
+
 
 
 ## Hardware
