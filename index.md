@@ -77,7 +77,7 @@ With autoregressive decoding, token generation is the biggest bottleneck of the 
 
 Generation rates on the Orange Pi 5 Pro are 29-58% higher, mainly due to the significantly higher memory bandwidth of DDR 5 (Note: on the Orange Pi 5 Pro we restricted execution to the 4 performance cores for a fair comparison). 
 
-Most larger LLMs — even those marketed as `edge-optimized` — are way to slow on either platform to be useful in a real-time voice agent. Token generation rates of well below 10 tok/sec (e.g. Qwen 3.5 2B at 7.8 tok/sec) lead lead to response times with much too high latency.
+Most larger LLMs — even those marketed as `edge-optimized` — are way to slow on either platform to be useful in a real-time voice agent. Single digit token generation rates (e.g. Qwen 3.5 2B at 7.8 tok/sec) lead to response times with much too high latency.
 
 ### Text-to-speech
 
