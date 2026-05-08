@@ -34,8 +34,6 @@ We chose a cheap off-the-shelf switchable voltage [20W hand-crank generator](htt
 
 To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a custom capacitor board to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
 
-> *TODO: insert circuit diagram and components list for the board*
-
 You can *feel* that load curve through the crank: when LLM inference and speech synthesis run together, the crank gets a lot harder to turn.
 
 ## Software
