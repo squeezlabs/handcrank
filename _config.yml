@@ -8,11 +8,9 @@ plugins:
 
 # Just-the-Docs options
 color_scheme: light
-search_enabled: true
+search_enabled: false
 heading_anchors: true
-aux_links:
-  "GitHub":
-    - "https://github.com/squeezlabs/handcrank"
+footer_content: ""
 
 markdown: kramdown
 kramdown:

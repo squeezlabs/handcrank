@@ -1,0 +1,84 @@
+// Logo + site title colored to match the orange logo.
+$logo-orange: #f57c1f;
+
+.site-title,
+.site-title:hover,
+.site-title-inline {
+  color: $logo-orange !important;
+}
+
+.site-title-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.site-logo-inline {
+  width: 1.6em;
+  height: 1.6em;
+  flex-shrink: 0;
+}
+
+// Custom orange button variant (matches the logo).
+.btn-orange,
+.btn-orange:hover {
+  color: $logo-orange;
+  border-color: $logo-orange;
+  box-shadow: inset 0 0 0 1px $logo-orange;
+  background-image: none;
+  background-color: transparent;
+}
+
+.btn-orange:hover {
+  background-color: rgba(245, 124, 31, 0.08);
+}
+
+// Center videos placed inline in markdown content.
+.main-content video {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+// Closing CTA section — uses default theme colors, only layout.
+.closing-cta {
+  margin-top: 4rem;
+  padding: 3rem 2rem;
+  text-align: center;
+
+  .eyebrow {
+    color: $logo-orange;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .closing-headline {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    border-bottom: none;
+
+    .accent {
+      color: $logo-orange;
+    }
+  }
+
+  .closing-sub {
+    max-width: 36rem;
+    margin: 0 auto 2rem;
+    line-height: 1.55;
+  }
+
+  .closing-button {
+    display: inline-block;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid $logo-orange;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+}
