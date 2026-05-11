@@ -1,0 +1,42 @@
+{%- comment -%}
+  Override of just-the-docs' components/site_nav.html.
+  Renders an in-page table of contents in the left sidebar
+  (we only have one page, so the default multi-page nav would be empty).
+{%- endcomment -%}
+
+<nav aria-label="On this page" id="site-nav" class="site-nav">
+  <ul class="nav-list">
+    <li class="nav-list-item"><a href="#motivations" class="nav-list-link">Motivations</a></li>
+
+    <li class="nav-list-item">
+      <a href="#hardware" class="nav-list-link">Hardware</a>
+      <ul class="nav-list">
+        <li class="nav-list-item"><a href="#single-board-computer" class="nav-list-link">Single Board Computer</a></li>
+        <li class="nav-list-item"><a href="#audio" class="nav-list-link">Audio</a></li>
+        <li class="nav-list-item"><a href="#power" class="nav-list-link">Power</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-list-item">
+      <a href="#software" class="nav-list-link">Software</a>
+      <ul class="nav-list">
+        <li class="nav-list-item"><a href="#operating-system" class="nav-list-link">Operating system</a></li>
+        <li class="nav-list-item"><a href="#voice-agent" class="nav-list-link">Voice Agent</a></li>
+        <li class="nav-list-item"><a href="#speech-recognition" class="nav-list-link">Speech recognition</a></li>
+        <li class="nav-list-item"><a href="#language-models" class="nav-list-link">Language model(s)</a></li>
+        <li class="nav-list-item"><a href="#text-to-speech" class="nav-list-link">Text-to-speech</a></li>
+        <li class="nav-list-item"><a href="#runtime" class="nav-list-link">Runtime</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-list-item">
+      <a href="#putting-it-together" class="nav-list-link">Putting it together</a>
+      <ul class="nav-list">
+        <li class="nav-list-item"><a href="#startup-time" class="nav-list-link">Startup Time</a></li>
+        <li class="nav-list-item"><a href="#latency-measurements" class="nav-list-link">Latency Measurements</a></li>
+        <li class="nav-list-item"><a href="#practical-power-needs" class="nav-list-link">Practical Power Needs</a></li>
+      </ul>
+    </li>
+
+  </ul>
+</nav>

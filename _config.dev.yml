@@ -1,0 +1,6 @@
+# Local-only override: use the installed just-the-docs gem instead of
+# fetching the theme over SSL. Production (GitHub Pages) ignores this file.
+
+remote_theme: false
+plugins: []
+theme: just-the-docs

@@ -1,11 +1,19 @@
 title: CrankGPT
 description: A hand-crankable, fully offline voice AI. Built at Squeez Labs.
-theme: jekyll-theme-cayman
 
-# Optional: shown in the cayman header
-show_downloads: false
+remote_theme: just-the-docs/just-the-docs
 
-# Useful defaults
+plugins:
+  - jekyll-remote-theme
+
+# Just-the-Docs options
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+aux_links:
+  "GitHub":
+    - "https://github.com/squeezlabs/handcrank"
+
 markdown: kramdown
 kramdown:
   input: GFM
@@ -17,3 +25,4 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  - _config.dev.yml

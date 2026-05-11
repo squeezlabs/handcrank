@@ -96,7 +96,7 @@ It takes about 30 seconds from the moment you start cranking to the moment you'r
 
 - **~10–15s** — Pi 5 cold boot through full firmware sequence
 - **~3s** — Linux boot to userspace (DietPi)
-- **10-15s** — Voice Agent startup (python imports, loading model weights)
+- **~10-15s** — Voice Agent startup (python imports, loading model weights)
 
 
 Even with all the obvious optimizations—BOOT_DELAY=0, splash disabled, unused boot sources removed, fastest available SD card—the Pi 5's pre-Linux stage still costs us ~10–15 seconds. Unlike the Pi 4, the Pi 5 runs a much more PC-like firmware sequence (PMIC ramp, RP1 init, PCIe/USB enumeration via the EEPROM bootloader) before it ever loads a kernel, and that floor is hard to break through from userland. And unfortunately, Pi 5 doesn't have a sleep mode/DRAM preservation, so every time the voltage drops below its minimum requirements, you have to start from zero.
@@ -130,7 +130,3 @@ CrankGPT's power draw really depends on the amount of AI inference running. The 
 | LLM + TTS inference   | ~5 V  | ~3 A    | ~15 W  |
 
 
-
-## Happy Cranking
-
-![CrankGPT, top view](pics/IMG_2673.jpg)
