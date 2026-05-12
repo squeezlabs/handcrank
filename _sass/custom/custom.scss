@@ -33,6 +33,32 @@ $logo-orange: #f57c1f;
   background-color: rgba(245, 124, 31, 0.08);
 }
 
+// Filled orange variant: solid background, white text.
+.btn-orange-filled,
+.btn-orange-filled:hover {
+  color: #fff !important;
+  background-color: $logo-orange;
+  background-image: none;
+  border-color: $logo-orange;
+  box-shadow: inset 0 0 0 1px $logo-orange;
+}
+
+.btn-orange-filled:hover {
+  background-color: darken($logo-orange, 6%);
+}
+
+// Override the built-in just-the-docs callout we registered as
+// `highlight-orange` (configured with color: yellow) so it renders in the
+// logo's orange instead.
+.highlight-orange {
+  background-color: rgba(245, 124, 31, 0.10) !important;
+  border-left-color: $logo-orange !important;
+
+  &::before {
+    background-color: $logo-orange !important;
+  }
+}
+
 // Center videos placed inline in markdown content.
 .main-content video {
   display: block;

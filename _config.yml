@@ -12,6 +12,10 @@ search_enabled: false
 heading_anchors: true
 footer_content: ""
 
+callouts:
+  highlight-orange:
+    color: yellow
+
 markdown: kramdown
 kramdown:
   input: GFM
