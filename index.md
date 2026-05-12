@@ -146,7 +146,7 @@ While it's currently impractical to run most sophisticated AI workloads on a Ras
 ## Demo
 
 <video src="assets/handcrank_demo.mp4" controls playsinline preload="metadata"
-       poster="pics/IMG_2672.jpg"
+       poster="assets/handcrank_demo_poster.jpg"
        aria-label="A walkthrough video of CrankGPT in action: cranking the generator, asking a question, and hearing a response.">
 </video>
 
