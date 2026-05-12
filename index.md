@@ -144,7 +144,7 @@ CrankGPT's power draw really depends on the amount of AI inference running. The 
 While it's currently impractical to run most sophisticated AI workloads on a Raspberry Pi, our work suggests that there exist a whole class of unexplored AI applications that can run locally on the edge without consuming huge amounts of power. And as models get smaller and more efficient (potentially moving away from autoregressive decoding), the "edge" will migrate from your expensive latest-model iPhone to much smaller and cheaper devices.
 
 <section class="closing-cta">
-  <h2 class="closing-headline">Get <span class="accent">cranking.</span></h2>
+  <h2 class="closing-headline"><a href="mailto:hello@squeezlabs.com" style="color:inherit;text-decoration:none;">Get <span class="accent">cranking.</span></a></h2>
 </section>
 
 
