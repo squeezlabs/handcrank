@@ -2,3 +2,14 @@
   <img src="{{ '/assets/favicon-96x96.png' | relative_url }}" alt="" class="site-logo-inline">
   {{ site.title }}
 </span>
+<script>
+  (function () {
+    var s = document.currentScript;
+    var outer = s && s.previousElementSibling && s.previousElementSibling.closest('a');
+    if (outer) {
+      outer.setAttribute('href', 'https://crankgpt.com/');
+      outer.setAttribute('target', '_blank');
+      outer.setAttribute('rel', 'noopener');
+    }
+  })();
+</script>

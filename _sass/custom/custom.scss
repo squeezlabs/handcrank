@@ -13,6 +13,16 @@ $logo-orange: #f57c1f;
   gap: 0.5rem;
 }
 
+.site-title-link,
+.site-title-link:hover,
+.site-title-link:visited {
+  color: $logo-orange !important;
+  text-decoration: none !important;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+
 .site-logo-inline {
   width: 1.6em;
   height: 1.6em;
