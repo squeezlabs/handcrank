@@ -4,13 +4,14 @@ title: CrankGPT — fully offline, human-powered local AI
 description: A local, voice assistant running on a hand-crank-powered single board computer.
 ---
 
+
+{: .highlight-orange }
+> CrankGPT is a fully offline and off-the-grid AI box.
+
 <video src="assets/crank_fixed.mp4" autoplay loop muted playsinline
        poster="pics/IMG_2672.jpg"
        aria-label="CrankGPT, a red metal box with a hand crank, voltmeter and OLED display">
 </video>
-
-{: .highlight-orange }
-> CrankGPT is a fully offline and off-the-grid AI box.
 
 Our current demos are variations on voice assistants—turn the crank, say something, get a response—but we've generated images (small), made poetry (bad), and written code using the same setup. There's no battery or cloud. Just a hand crank, a little computer, and a small stack of speech and language models running locally. Provided the electronics are kept dry and at a reasonable temperature, there's no reason this thing won't still work in a thousand years.
 
