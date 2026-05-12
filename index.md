@@ -8,7 +8,7 @@ description: A local, voice assistant running on a hand-crank-powered single boa
 {: .highlight-orange }
 > CrankGPT is a fully offline and off-the-grid AI box.
 
-<video src="assets/crank_fixed.mp4" autoplay loop muted playsinline
+<video src="assets/handcrank_intro.mp4" autoplay loop muted playsinline
        poster="pics/IMG_2672.jpg"
        aria-label="CrankGPT, a red metal box with a hand crank, voltmeter and OLED display">
 </video>
@@ -142,6 +142,13 @@ CrankGPT's power draw really depends on the amount of AI inference running. The 
 ## Conclusion
 
 While it's currently impractical to run most sophisticated AI workloads on a Raspberry Pi, our work suggests that there exist a whole class of unexplored AI applications that can run locally on the edge without consuming huge amounts of power. And as models get smaller and more efficient (potentially moving away from autoregressive decoding), the "edge" will migrate from your expensive latest-model iPhone to much smaller and cheaper devices.
+
+## Demo
+
+<video src="assets/handcrank_demo.mp4" controls playsinline preload="metadata"
+       poster="pics/IMG_2672.jpg"
+       aria-label="A walkthrough video of CrankGPT in action: cranking the generator, asking a question, and hearing a response.">
+</video>
 
 <section class="closing-cta">
   <h2 class="closing-headline"><a href="mailto:hello@squeezlabs.com" style="color:inherit;text-decoration:none;">Get <span class="accent">cranking.</span></a></h2>
