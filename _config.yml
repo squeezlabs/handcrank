@@ -1,6 +1,9 @@
 title: CrankGPT
 description: A hand-crankable, fully offline voice AI. Built at Squeez Labs.
 
+url: "https://squeezlabs.github.io"
+baseurl: "/handcrank"
+
 remote_theme: just-the-docs/just-the-docs
 
 plugins:
