@@ -1,19 +1,19 @@
 ---
 layout: default
 title: CrankGPT — fully offline, human-powered local AI 
-description: A local, voice assistant running on a hand-crank-powered single board computer.
+description: A local voice assistant running on a hand-crank-powered single-board computer.
 ---
 
 
 {: .highlight-orange }
-> CrankGPT is a fully offline and off-the-grid AI box.
+> CrankGPT is a fully offline, off-the-grid AI box.
 
-<video src="assets/handcrank_intro.mp4" autoplay loop muted playsinline
-       poster="pics/IMG_2672.jpg"
-       aria-label="CrankGPT, a red metal box with a hand crank, voltmeter and OLED display">
+<video src="assets/handcrank_demo.mp4" controls playsinline preload="metadata"
+       poster="assets/handcrank_demo_poster.jpg"
+       aria-label="A walkthrough video of CrankGPT in action: cranking the generator, asking a question, and hearing a response.">
 </video>
 
-Our current demos are variations on voice assistants—turn the crank, say something, get a response—but we've generated images (small), made poetry (bad), and written code using the same setup. There's no battery or cloud. Just a hand crank, a little computer, and a small stack of speech and language models running locally. Provided the electronics are kept dry and at a reasonable temperature, there's no reason this thing won't still work in a thousand years.
+Our current demos are variations on voice assistants—turn the crank, say something, get a response—but we've generated images (small), made poetry (bad), and written code using the same setup. There's no battery or cloud. Just a hand crank, a little computer, and a small stack of speech and language models running locally. Provided the electronics are kept dry and at a reasonable temperature, there's no reason this thing won't still work in a hundred years, though you'll definitely need a fresh SD card.
 
 As will be familiar to anyone who has ever undertaken a hardware project, it took about a week to build a proof of concept and many months of kernel optimizations, board revisions, code refactors, and CAD tweaks to get to a thing that works as we envisioned. This article walks through how we built it: the hardware, the local voice agent stack, and the engineering required to **make a conversation feel real on a device this small**.
 
@@ -27,6 +27,8 @@ As will be familiar to anyone who has ever undertaken a hardware project, it too
 
 ## Hardware
 
+<image src="assets/xray.jpg" aria-label="A prototype version of CrankGPT housed in a see-through box"></image>
+
 ### Single Board Computer
 
 We used a stock Raspberry Pi 5 with 8GB RAM and a cooling fan HAT. There are better performing SBDs for the same price (an Orange Pi with its faster DDR5 RAM is an even better fit for LLM inference as we'll discuss below), but it's hard to beat the Pi's accessibility and software ecosystem. The Pi runs speech recognition, a language model, and text-to-speech locally on CPU (no accelerators).
@@ -35,11 +37,15 @@ We used a stock Raspberry Pi 5 with 8GB RAM and a cooling fan HAT. There are bet
 
 We used the [KEYESTUDIO ReSpeaker 2-Mic Pi HAT](https://www.amazon.com/dp/B07H3T8SQY){:target="_blank"}: an all-in-one audio I/O solution for Pi designed specifically for voice assistants. It includes a stereo MEMS mic array and various audio outputs (we used the older version with the WM8960 codec). It sits directly on the Pi's GPIO headers and has decent far-field mic performance, even within an enclosure.
 
+We also tried various USB sound cards ([this one](https://www.amazon.com/dp/B08R38TXXL){:target="_blank"} worked well) to connect an [external mic](https://www.amazon.com/dp/B08PV5CF1F){:target="_blank"} and [speakers](https://www.amazon.com/dp/B0822Z4LPH){:target="_blank"}.
+
 ### Power
 
 We chose a cheap off-the-shelf switchable voltage [20W hand-crank generator](https://www.amazon.com/dp/B0F52VY4KF){:target="_blank"} marketed for emergency USB charging. The Pi normally draws around 1.5A, but when it's working hard (as it does when doing inference on the CPU), its current requirements can increase substantially, causing the generator voltage to sag below the Pi's required 4.8V or even, in the case of a momentary 5A spike, to trigger the generator's internal overcurrent protection and shut off the voltage output entirely, causing the Pi to brown out.
 
-To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a custom capacitor board to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
+<image src="assets/schematic.jpg" aria-label="A schematic diagram of a 5V power-smoothing super capacitor bank"></image>
+
+To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a [custom capacitor board](https://docs.google.com/spreadsheets/d/1Zv_Hsinvx_sWtdur4iWYZVM_Zct7wCH1PM6Od_ClN8c/edit?usp=sharing){:target="_blank"} to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
 
 You can *feel* that load curve through the crank: when LLM inference and speech synthesis run together, the crank gets a lot harder to turn.
 
@@ -47,7 +53,7 @@ You can *feel* that load curve through the crank: when LLM inference and speech 
 
 ### Operating system
 
-When you're cranking, every second counts—the minute or so it takes Raspian to boot up feels like an eternity. [DietPi](https://dietpi.com/){:target="_blank"} is a minimalistic, stripped-down Debian-based image that prioritizes fast boot time over lots of immediately available default services. It shrank our startup time substantially, and turning off unneeded radio services (Bluetooth, Wi-Fi, etc.) reduced it even further: from Linux boot to a usable userspace in around 3 seconds.
+When you're cranking, every second counts—the minute or so it takes Linux to boot up feels like an eternity. [DietPi](https://dietpi.com/){:target="_blank"} is a minimalistic, stripped-down Debian-based image that prioritizes fast boot time over lots of immediately available default services. It shortened our startup time substantially, and turning off unneeded radio services (Bluetooth, Wi-Fi, etc.) reduced it even further: from Linux boot to a usable userspace in around 3 seconds.
 
 ### Voice agent
 
@@ -143,11 +149,9 @@ CrankGPT's power draw really depends on the amount of AI inference running. The 
 
 While it's currently impractical to run most sophisticated AI workloads on a Raspberry Pi, our work suggests that there exist a whole class of unexplored AI applications that can run locally on the edge without consuming huge amounts of power. And as models get smaller and more efficient (potentially moving away from autoregressive decoding), the "edge" will migrate from your expensive latest-model iPhone to much smaller and cheaper devices.
 
-## Demo
-
-<video src="assets/handcrank_demo.mp4" controls playsinline preload="metadata"
-       poster="assets/handcrank_demo_poster.jpg"
-       aria-label="A walkthrough video of CrankGPT in action: cranking the generator, asking a question, and hearing a response.">
+<video src="assets/handcrank_intro.mp4" autoplay loop muted playsinline
+       poster="pics/IMG_2672.jpg"
+       aria-label="CrankGPT, a red metal box with a hand crank, voltmeter and OLED display">
 </video>
 
 <section class="closing-cta">
