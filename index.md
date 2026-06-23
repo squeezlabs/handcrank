@@ -43,9 +43,9 @@ We also tried various USB sound cards ([this one](https://www.amazon.com/dp/B08R
 
 We chose a cheap off-the-shelf switchable voltage [20W hand-crank generator](https://www.amazon.com/dp/B0F52VY4KF){:target="_blank"} marketed for emergency USB charging. The Pi normally draws around 1.5A, but when it's working hard (as it does when doing inference on the CPU), its current requirements can increase substantially, causing the generator voltage to sag below the Pi's required 4.8V or even, in the case of a momentary 5A spike, to trigger the generator's internal overcurrent protection and shut off the voltage output entirely, causing the Pi to brown out.
 
-<image src="assets/schematic.jpg" aria-label="A schematic diagram of a 5V power-smoothing super capacitor bank"></image>
+<img src="assets/schematic.jpg" alt="A schematic diagram of a 5V power-smoothing super capacitor bank">
 
-To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a [custom capacitor board](https://docs.google.com/spreadsheets/d/1Zv_Hsinvx_sWtdur4iWYZVM_Zct7wCH1PM6Od_ClN8c/edit?usp=sharing){:target="_blank"} to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
+To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a [custom capacitor board]({{ '/assets/bom/bom.html#capacitor-board' | relative_url }}){:target="_blank"} to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
 
 You can *feel* that load curve through the crank: when LLM inference and speech synthesis run together, the crank gets a lot harder to turn.
 
