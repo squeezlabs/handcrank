@@ -17,7 +17,7 @@ Our current demos are variations on voice assistants—turn the crank, say somet
 
 As will be familiar to anyone who has ever undertaken a hardware project, it took about a week to build a proof of concept and many months of kernel optimizations, board revisions, code refactors, and CAD tweaks to get to a thing that works as we envisioned. This article walks through how we built it: the hardware, the local voice agent stack, and the engineering required to **make a conversation feel real on a device this small**.
 
-## Motivations
+## Motivation
 
 1. For something to have "smarts" currently assumes a wall socket and a data center. CrankGPT is a small argument that neither has to be true.
 2. Local models are private models. Why give away what we don't have to?
@@ -103,7 +103,7 @@ We stream the LLM's output sentence-by-sentence into Piper. To avoid pauses duri
 
 All components run on ONNX Runtime. PyTorch dependencies (lingering in some components while not technically required) were removed to save RAM and improve startup time.
 
-## Putting it all together
+## Cost of a Conversation
 
 
 ### Startup Time
@@ -144,6 +144,63 @@ CrankGPT's power draw really depends on the amount of AI inference running. The 
 | Idle (just keep the Pi alive) | ~5 V    | ~0.8 A  | ~4 W   |
 | ASR (Moonshine)       | ~5 V  | ~1.6 A  | ~8 W   |
 | LLM + TTS inference   | ~5 V  | ~3 A    | ~15 W  |
+
+The crank tells you when inference is running: idle, it spins easily; the moment LLM and TTS fire together, the current climbs and you feel the handle fight back. The cost of a conversation isn't abstract—it's in your arm.
+
+## Want one? Build your own!
+
+We're not manufacturing CrankGPT for sale but we'd love for you to build your own.  Every component you need is described in detail above and openly licensed under permissive terms, we just ask that you credit Squeez Labs as the original inventor when you share publicly.
+
+This project requires some familiarity with electronics, Linux, and Python. It's a great excuse to get comfortable with them if you aren't already. If you follow our directions, building CrankGPT should cost less than $100 beyond the price of a capable Raspberry Pi board (currently ~$200 for the 8GB version).
+
+First, collect the necessary [the hardware]({{ '/assets/bom/bom.html#main-components' | relative_url }}){:target="_blank"}:
+
+* A 20W hand-crank generator
+* A power-smoothing system-either our own [super cap board](#power) or a pass-through USB power bank such as [this one](https://www.amazon.com/Anker-Power-Built-Retractable-USB-C/dp/B0DGKWTQQC){:target="_blank"}
+* A Raspberry Pi 5 with at least 8&nbsp;GB of RAM or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc.
+* A soundcard, a speaker and a mic
+* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/handcrank/tree/main/cad){:target="_blank"})
+
+Then set up the software:
+
+* Flash a [DietPi](https://dietpi.com/){:target="_blank"} image (their docs cover this well), then drop our [`dietpi.txt`](https://github.com/squeezlabs/handcrank/blob/main/dietpi/dietpi.txt){:target="_blank"}—tuned for a minimal, offline, fast-booting box—onto the boot partition before first boot; it disables Wi-Fi and sets sensible defaults (you'll want to adjust the static IP / network block to match your own network). Boot your pi with this sd card.
+* Once it's booted, ssh into the pi, turn off Bluetooth in `dietpi-config` and enable the soundcard.
+* If you're using the KEYESTUDIO ReSpeaker 2-Mic Pi HAT, you'll need the WM8960 driver, which can be a bit fiddly to get working on current kernels. Here's what worked for us, using [HinTak's actively maintained seeed-voicecard fork](https://github.com/HinTak/seeed-voicecard){:target="_blank"} (match the `-b` branch and the `linux-headers` package to your kernel version):
+
+```
+git clone -b v6.12 https://github.com/HinTak/seeed-voicecard/
+cd seeed-voicecard && bash install.sh
+# install matching kernel headers, otherwise the card won't load:
+apt install linux-headers-rpi-2712
+# then in dietpi-config --> Audio, select: hw:0,0 (seeed2micvoicec ... wm8960-hifi-0)
+reboot
+```
+
+* Build [llama.cpp](https://github.com/ggml-org/llama.cpp){:target="_blank"} with the Raspberry Pi optimizations:
+
+```
+cd /root/dev
+apt install -y build-essential cmake git libcurl4-openssl-dev
+git clone https://github.com/ggml-org/llama.cpp.git && cd llama.cpp
+cmake -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DGGML_NATIVE=OFF \
+  -DGGML_CPU_ARM_ARCH=armv8.2-a+dotprod \
+  -DGGML_CPU_KLEIDIAI=ON \
+  -DGGML_LLAMAFILE=ON \
+  -DGGML_CURL=ON
+cmake --build build --config Release -j$(nproc)
+```
+
+* Clone our [voice agent](https://github.com/ktomanek/edge_voice_agent){:target="_blank"} into `/root/dev` and follow its installation instructions (including the model download scripts):
+
+```
+cd /root/dev
+git clone https://github.com/ktomanek/edge_voice_agent.git
+```
+* Have both the llama.cpp server (serving your chosen LLM) and the voice agent launch on boot via `dietpi-autostart` (Custom script). Our [`startup_script.sh`](https://github.com/squeezlabs/handcrank/blob/main/dietpi/startup_script.sh){:target="_blank"} does exactly this. Optionally adjust your model paths and copy it to `/var/lib/dietpi/dietpi-autostart/custom.sh`.
+
+The voice agent ships with scripts to get you running with a sensible set of default models, but you can swap any of them out (see the voice agent repo for instructions). It's model-agnostic, so adjust models as your hardware allows. On beefier hardware (e.g. a Jetson rather than a Pi) you can swap in larger models; just know you'll likely need a bigger crank and a modified power board.
 
 ## Conclusion
 
