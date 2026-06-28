@@ -163,7 +163,8 @@ The crank tells you when inference is running: idle, it spins easily; the moment
 
 ## Build your own!
 
-We're not manufacturing CrankGPT for sale but we'd love for you to build your own.  Every component you need is described in detail above and openly licensed under permissive terms, we just ask that you credit Squeez Labs as the original inventor when you share publicly.
+{: .highlight-orange }
+> *We're not manufacturing CrankGPT for sale but we'd love for you to build your own.  Every component you need is described in detail above and openly licensed under permissive terms, we just ask that you credit Squeez Labs as the original inventor when you share publicly.*
 
 This project requires some familiarity with electronics, Linux, and Python. It's a great excuse to get comfortable with them if you aren't already. If you follow our directions, building CrankGPT should cost less than $100 beyond the price of a capable Raspberry Pi board (currently ~$200 for the 8GB version).
 
