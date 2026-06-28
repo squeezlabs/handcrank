@@ -93,7 +93,7 @@ Most larger LLMs—even those marketed as `edge-optimized`—are way too slow on
 
 ### Text-to-speech
 
-There's a growing list of natural-sounding, CPU-runnable voice models, but most simply don't run in real time on a Raspberry Pi. [Kokoro](https://github.com/hexgrad/kokoro){:target="_blank"}, [KittenML](https://github.com/KittenML/KittenTTS){:target="_blank"}, [PocketTTS](https://huggingface.co/kyutai/pocket-tts){:target="_blank"} and [Piper](https://github.com/OHF-Voice/piper1-gpl){:target="_blank"} are the likely contenders for low-resource edge inference. Piper wins by a large margin on latency and generation speed. [Concretely](https://github.com/ktomanek/edge_tts_comparison#non-streaming){:target="_blank"}, on a Raspberry Pi 5, Piper synthesizes our 20-word test utterance in about half a second, while Kokoro is nearly 9× slower. PocketTTS does support streaming, which significantly reduces time-to-first-byte, but [its real-time factor (RTF) is still above 1.0 on a Raspberry Pi causing audible stuttering](https://github.com/ktomanek/edge_tts_comparison#streaming){:target="_blank"}. 
+There's a growing list of natural-sounding, CPU-runnable voice models, but most simply don't run in real time on a Raspberry Pi. [Kokoro](https:///hexgrad/kokoro){:target="_blank"}, [KittenML](https:///KittenML/KittenTTS){:target="_blank"}, [PocketTTS](https://huggingface.co/kyutai/pocket-tts){:target="_blank"} and [Piper](https:///OHF-Voice/piper1-gpl){:target="_blank"} are the likely contenders for low-resource edge inference. Piper wins by a large margin on latency and generation speed. [Concretely](https:///ktomanek/edge_tts_comparison#non-streaming){:target="_blank"}, on a Raspberry Pi 5, Piper synthesizes our 20-word test utterance in about half a second, while Kokoro is nearly 9× slower. PocketTTS does support streaming, which significantly reduces time-to-first-byte, but [its real-time factor (RTF) is still above 1.0 on a Raspberry Pi causing audible stuttering](https:///ktomanek/edge_tts_comparison#streaming){:target="_blank"}. 
 
 Piper's headroom is what lets it keep up with streaming LLM output in a real conversation. The others just can't.
 
@@ -159,7 +159,7 @@ First, collect the necessary [the hardware]({{ '/assets/bom/bom.html#main-compon
 * A power-smoothing system-either our own [super cap board](#power) or a pass-through USB power bank such as [this one](https://www.amazon.com/Anker-Power-Built-Retractable-USB-C/dp/B0DGKWTQQC){:target="_blank"}
 * A Raspberry Pi 5 with at least 8&nbsp;GB of RAM or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc.
 * A soundcard, a speaker and a mic
-* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/handcrank/tree/main/cad){:target="_blank"})
+* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/crankgpt_hardware/tree/main/cad){:target="_blank"}
 
 Then set up the software:
 
