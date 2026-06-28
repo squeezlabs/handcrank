@@ -170,13 +170,13 @@ This project requires some familiarity with electronics, Linux, and Python. It's
 
 First, collect the necessary the hardware (prices are current as of time of writing in the US):
 
-| Manufacturer | Qty. | Description | Source | Unit Price |
-|---|---:|---|---|---:|
-| Mahugde | 1 | **20W HAND CRANK GENERATOR** | [Amazon](https://www.amazon.com/dp/B0F52VY4KF){:target="_blank"} | $35.99 |
-| Raspberry Pi | 1 | **RASPBERRY PI 5 8GB** or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc. | [Adafruit](https://www.adafruit.com/product/5813){:target="_blank"} | $200.00 |
-| Raspberry Pi | 1 | **PI 5 ACTIVE COOLER** (not strictly necessary, but recommended) | [Adafruit](https://www.adafruit.com/product/5815){:target="_blank"} | $13.50 |
-| KEYESTUDIO | 1 | **RESPEAKER 2-MIC PI HAT V1.0** or USB soundcard, speaker, and mic as mentioned [above](#audio) | [Amazon](https://www.amazon.com/dp/B07H3T8SQY){:target="_blank"} | $11.99 |
-| CQRobot | 1 | **3W 4OHM SPEAKER** | [Amazon](https://www.amazon.com/dp/B0822Z4LPH){:target="_blank"} | $3.99 |
+| Qty. | Description | Source | Unit Price |
+|---:|---|---|---:|
+| 1 | **20W HAND CRANK GENERATOR** | [Amazon](https://www.amazon.com/dp/B0F52VY4KF){:target="_blank"} | $35.99 |
+| 1 | **RASPBERRY PI 5 8GB** or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc. | [Adafruit](https://www.adafruit.com/product/5813){:target="_blank"} | $200.00 |
+| 1 | **RASPBERRY PI 5 ACTIVE COOLER** (not strictly necessary, but recommended) | [Adafruit](https://www.adafruit.com/product/5815){:target="_blank"} | $13.50 |
+| 1 | **KEYSTUDIO RESPEAKER 2-MIC PI HAT V1.0** or USB soundcard, speaker, and mic as mentioned [above](#audio) | [Amazon](https://www.amazon.com/dp/B07H3T8SQY){:target="_blank"} | $11.99 |
+| 1 | **CQROBOT 3W 4OHM SPEAKER** | [Amazon](https://www.amazon.com/dp/B0822Z4LPH){:target="_blank"} | $3.99 |
 
 You'll also need:
 * A power-smoothing system-either our own [super cap board](#power) or a pass-through USB power bank such as [this one](https://www.amazon.com/Anker-Power-Built-Retractable-USB-C/dp/B0DGKWTQQC){:target="_blank"}. **Note:** using the power bank avoids much of the complexity of a super capacitor bank but it also breaks the direct connection between cranking and powering the Pi. You most likely will not be able to feel much difference in the resistance the crank offers in response to increased or decreased computational load.
