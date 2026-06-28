@@ -159,7 +159,7 @@ First, collect the necessary [the hardware]({{ '/assets/bom/bom.html#main-compon
 * A power-smoothing system-either our own [super cap board](#power) or a pass-through USB power bank such as [this one](https://www.amazon.com/Anker-Power-Built-Retractable-USB-C/dp/B0DGKWTQQC){:target="_blank"}
 * A Raspberry Pi 5 with at least 8&nbsp;GB of RAM or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc.
 * A soundcard, a speaker and a mic
-* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/crankgpt_hardware/tree/main/cad){:target="_blank"}
+* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/crankgpt_hardware/tree/main/cad){:target="_blank"})
 
 Then set up the software:
 
