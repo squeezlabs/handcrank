@@ -50,18 +50,18 @@ To ensure the Pi sees a steady voltage when the full inference stack kicks in (a
 
 <img src="assets/schematic.jpg" alt="A schematic diagram of a 5V power-smoothing super capacitor bank">
 
-| Description | Purpose | Manufacturer | Manufacturer Part # | Label | Qty. | Source | Unit Price |
-|---|---|---|---|---|---:|---|---:|
-| **DIODE SCHOTTKY 45V 15A R-6** | Keeps current from flowing back into the generator | SMC Diode Solutions | 15SQ045 | S_D | 1 | [Digikey](https://www.digikey.com/en/products/detail/smc-diode-solutions/15SQ045/6022444){:target="_blank"} | $1.24 |
-| **RESISTOR 100 OHM 5% 1W AXIAL** | Ensure super caps in series charge equally | Yageo | RSF100JR-73-100R | R_BAL1, R_BAL_2, R_BAL_3 | 3 | [Digikey](https://www.digikey.com/en/products/detail/yageo/RSF100JR-73-100R/9161867){:target="_blank"} | $0.19 |
-| **CAPACITOR ALUM 2200UF 20% 10V RADIAL** | Smooths out output when LDO shuts off | Rubycon | 10YXJ2200M10X20 | C | 1 | [Digikey](https://www.digikey.com/en/products/detail/rubycon/10YXJ2200M10X20/3134009){:target="_blank"} | $0.64 |
-| **IC REG LINEAR POS ADJ 5A TO220-5** | Regulates hand crank 6.3V to 5.3V SBCs expect. This is not an elegant solution—it wastes power and only works provided the voltage is high enough, but it doesn't need steady power like a buck converter | Microchip Technology | MIC29502WT | LDO | 1 | [Digikey](https://www.digikey.com/en/products/detail/microchip-technology/MIC29502WT/771614){:target="_blank"} | $9.96 |
-| **CAPACITOR 50F -20% +50% 2.7V T/H** | Store the power the SBC uses | Vishay et al | MAL222091008E3 | SUP_C | 3 | [Digikey](https://www.digikey.com/en/products/detail/vishay-beyschlag-draloric-bc-components/MAL222091008E3/7318577){:target="_blank"} | $5.79 |
-| **RESISTOR 1K OHM 1% 1/4W AXIAL** | Part of the voltage divider that sets the LDO's output voltage | Yageo | MFR-25FRF52-1K | R1, R2 | 2 | [Digikey](https://www.digikey.com/en/products/detail/yageo/MFR-25FRF52-1K/14891){:target="_blank"} | $0.10 |
-| **RESISTOR 2.2K OHM 1% 1/4W AXIAL** | Part of the voltage divider that sets the LDO's output voltage | Yageo | MFR-25FTE52-2K2 | R3 | 1 | [Digikey](https://www.digikey.com/en/products/detail/yageo/MFR-25FTE52-2K2/9140022){:target="_blank"} | $0.10 |
-| **ON/OFF ROUND ROCKER SWITCH 12V** | Connects and disconnects the SBC to allow priming the caps | Twidec | — | SPDT | 1 | [Amazon](https://www.amazon.com/dp/B0B67GX6CT){:target="_blank"} | $1.20 |
-| **ANALOG VOLTAGE METER** | Useful for seeing how much power is in the caps. Connect to ground and the pre-LDO unregulated voltage ouptut of the caps | NUOYAQI | — | Not pictured | 1 | [Amazon](https://www.amazon.com/dp/B0D83MBVDQ){:target="_blank"} | $6.99 |
-| **USB C BREAKOUT BOARD** | We use these to connect the generator to the board and the board to the SBC via USB (rather than soldering wires) | Teansic | — | Not pictured | 2 | [Amazon](https://www.amazon.com/dp/B0B4J5NJ2Y){:target="_blank"} | $0.75 |
+| Description | Purpose | Label | Qty. | Source | Unit Price |
+|---|---|---|---:|---|---:|
+| **DIODE SCHOTTKY 45V 15A R-6** | Keeps current from flowing back into the generator | S_D | 1 | [Digikey](https://www.digikey.com/en/products/detail/smc-diode-solutions/15SQ045/6022444){:target="_blank"} | $1.24 |
+| **RESISTOR 100 OHM 5% 1W AXIAL** | Ensure super caps in series charge equally | R_BAL1, R_BAL_2, R_BAL_3 | 3 | [Digikey](https://www.digikey.com/en/products/detail/yageo/RSF100JR-73-100R/9161867){:target="_blank"} | $0.19 |
+| **CAPACITOR ALUM 2200UF 20% 10V RADIAL** | Smooths out output when LDO shuts off | C | 1 | [Digikey](https://www.digikey.com/en/products/detail/rubycon/10YXJ2200M10X20/3134009){:target="_blank"} | $0.64 |
+| **IC REG LINEAR POS ADJ 5A TO220-5** | Regulates hand crank 6.3V to 5.3V SBCs expect. This is not an elegant solution—it wastes power and only works provided the voltage is high enough, but it doesn't need steady power like a buck converter | LDO | 1 | [Digikey](https://www.digikey.com/en/products/detail/microchip-technology/MIC29502WT/771614){:target="_blank"} | $9.96 |
+| **CAPACITOR 50F -20% +50% 2.7V T/H** | Store the power the SBC uses | SUP_C | 3 | [Digikey](https://www.digikey.com/en/products/detail/vishay-beyschlag-draloric-bc-components/MAL222091008E3/7318577){:target="_blank"} | $5.79 |
+| **RESISTOR 1K OHM 1% 1/4W AXIAL** | Part of the voltage divider that sets the LDO's output voltage | R1, R2 | 2 | [Digikey](https://www.digikey.com/en/products/detail/yageo/MFR-25FRF52-1K/14891){:target="_blank"} | $0.10 |
+| **RESISTOR 2.2K OHM 1% 1/4W AXIAL** | Part of the voltage divider that sets the LDO's output voltage | R3 | 1 | [Digikey](https://www.digikey.com/en/products/detail/yageo/MFR-25FTE52-2K2/9140022){:target="_blank"} | $0.10 |
+| **ON/OFF ROUND ROCKER SWITCH 12V** | Connects and disconnects the SBC to allow priming the caps | SPDT | 1 | [Amazon](https://www.amazon.com/dp/B0B67GX6CT){:target="_blank"} | $1.20 |
+| **ANALOG VOLTAGE METER** | Useful for seeing how much power is in the caps. Connect to ground and the pre-LDO unregulated voltage ouptut of the caps | Not pictured | 1 | [Amazon](https://www.amazon.com/dp/B0D83MBVDQ){:target="_blank"} | $6.99 |
+| **USB C BREAKOUT BOARD** | We use these to connect the generator to the board and the board to the SBC via USB (rather than soldering wires) | Not pictured | 2 | [Amazon](https://www.amazon.com/dp/B0B4J5NJ2Y){:target="_blank"} | $0.75 |
 
 ## Software
 
