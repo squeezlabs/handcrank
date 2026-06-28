@@ -43,11 +43,25 @@ We also tried various USB sound cards ([this one](https://www.amazon.com/dp/B08R
 
 We chose a cheap off-the-shelf switchable voltage [20W hand-crank generator](https://www.amazon.com/dp/B0F52VY4KF){:target="_blank"} marketed for emergency USB charging. The Pi normally draws around 1.5A, but when it's working hard (as it does when doing inference on the CPU), its current requirements can increase substantially, causing the generator voltage to sag below the Pi's required 4.8V or even, in the case of a momentary 5A spike, to trigger the generator's internal overcurrent protection and shut off the voltage output entirely, causing the Pi to brown out.
 
+To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a custom capacitor board to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
+
+{: .highlight-orange }
+> **You can *feel* that load curve through the crank: when LLM inference and speech synthesis run together, the crank gets a lot harder to turn.**
+
 <img src="assets/schematic.jpg" alt="A schematic diagram of a 5V power-smoothing super capacitor bank">
 
-To ensure the Pi sees a steady voltage when the full inference stack kicks in (and to afford crankers a little rest), we built a [custom capacitor board]({{ '/assets/bom/bom.html#capacitor-board' | relative_url }}){:target="_blank"} to smooth out the generator's output and act as a short-term (~20 second) power reservoir.
-
-You can *feel* that load curve through the crank: when LLM inference and speech synthesis run together, the crank gets a lot harder to turn.
+| Description | Purpose | Manufacturer | Manufacturer Part # | Label | Qty. | Source | Unit Price |
+|---|---|---|---|---|---:|---|---:|
+| **DIODE SCHOTTKY 45V 15A R-6** | Keeps current from flowing back into the generator | SMC Diode Solutions | 15SQ045 | S_D | 1 | [Digikey](https://www.digikey.com/en/products/detail/smc-diode-solutions/15SQ045/6022444){:target="_blank"} | $1.24 |
+| **RESISTOR 100 OHM 5% 1W AXIAL** | Ensure super caps in series charge equally | Yageo | RSF100JR-73-100R | R_BAL1, R_BAL_2, R_BAL_3 | 3 | [Digikey](https://www.digikey.com/en/products/detail/yageo/RSF100JR-73-100R/9161867){:target="_blank"} | $0.19 |
+| **CAPACITOR ALUM 2200UF 20% 10V RADIAL** | Smooths out output when LDO shuts off | Rubycon | 10YXJ2200M10X20 | C | 1 | [Digikey](https://www.digikey.com/en/products/detail/rubycon/10YXJ2200M10X20/3134009){:target="_blank"} | $0.64 |
+| **IC REG LINEAR POS ADJ 5A TO220-5** | Regulates hand crank 6.3V to 5.3V SBCs expect. This is not an elegant solution—it wastes power and only works provided the voltage is high enough, but it doesn't need steady power like a buck converter | Microchip Technology | MIC29502WT | LDO | 1 | [Digikey](https://www.digikey.com/en/products/detail/microchip-technology/MIC29502WT/771614){:target="_blank"} | $9.96 |
+| **CAPACITOR 50F -20% +50% 2.7V T/H** | Store the power the SBC uses | Vishay et al | MAL222091008E3 | SUP_C | 3 | [Digikey](https://www.digikey.com/en/products/detail/vishay-beyschlag-draloric-bc-components/MAL222091008E3/7318577){:target="_blank"} | $5.79 |
+| **RESISTOR 1K OHM 1% 1/4W AXIAL** | Part of the voltage divider that sets the LDO's output voltage | Yageo | MFR-25FRF52-1K | R1, R2 | 2 | [Digikey](https://www.digikey.com/en/products/detail/yageo/MFR-25FRF52-1K/14891){:target="_blank"} | $0.10 |
+| **RESISTOR 2.2K OHM 1% 1/4W AXIAL** | Part of the voltage divider that sets the LDO's output voltage | Yageo | MFR-25FTE52-2K2 | R3 | 1 | [Digikey](https://www.digikey.com/en/products/detail/yageo/MFR-25FTE52-2K2/9140022){:target="_blank"} | $0.10 |
+| **ON/OFF ROUND ROCKER SWITCH 12V** | Connects and disconnects the SBC to allow priming the caps | Twidec | — | SPDT | 1 | [Amazon](https://www.amazon.com/dp/B0B67GX6CT){:target="_blank"} | $1.20 |
+| **ANALOG VOLTAGE METER** | Useful for seeing how much power is in the caps. Connect to ground and the pre-LDO unregulated voltage ouptut of the caps | NUOYAQI | — | Not pictured | 1 | [Amazon](https://www.amazon.com/dp/B0D83MBVDQ){:target="_blank"} | $6.99 |
+| **USB C BREAKOUT BOARD** | We use these to connect the generator to the board and the board to the SBC via USB (rather than soldering wires) | Teansic | — | Not pictured | 2 | [Amazon](https://www.amazon.com/dp/B0B4J5NJ2Y){:target="_blank"} | $0.75 |
 
 ## Software
 
@@ -147,23 +161,29 @@ CrankGPT's power draw really depends on the amount of AI inference running. The 
 
 The crank tells you when inference is running: idle, it spins easily; the moment LLM and TTS fire together, the current climbs and you feel the handle fight back. The cost of a conversation isn't abstract—it's in your arm.
 
-## Want one? Build your own!
+## Build your own!
 
 We're not manufacturing CrankGPT for sale but we'd love for you to build your own.  Every component you need is described in detail above and openly licensed under permissive terms, we just ask that you credit Squeez Labs as the original inventor when you share publicly.
 
 This project requires some familiarity with electronics, Linux, and Python. It's a great excuse to get comfortable with them if you aren't already. If you follow our directions, building CrankGPT should cost less than $100 beyond the price of a capable Raspberry Pi board (currently ~$200 for the 8GB version).
 
-First, collect the necessary [the hardware]({{ '/assets/bom/bom.html#main-components' | relative_url }}){:target="_blank"}:
+First, collect the necessary the hardware (prices are current as of time of writing in the US):
 
-* A 20W hand-crank generator
-* A power-smoothing system-either our own [super cap board](#power) or a pass-through USB power bank such as [this one](https://www.amazon.com/Anker-Power-Built-Retractable-USB-C/dp/B0DGKWTQQC){:target="_blank"}
-* A Raspberry Pi 5 with at least 8&nbsp;GB of RAM or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc.
-* A soundcard, a speaker and a mic
-* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/crankgpt_hardware/tree/main/cad){:target="_blank"})
+| Manufacturer | Qty. | Description | Source | Unit Price |
+|---|---:|---|---|---:|
+| Mahugde | 1 | **20W HAND CRANK GENERATOR** | [Amazon](https://www.amazon.com/dp/B0F52VY4KF){:target="_blank"} | $35.99 |
+| Raspberry Pi | 1 | **RASPBERRY PI 5 8GB** or any other equivalent single board computer that can run Linux—Jetson Orin Nano, Orange Pi 5, etc. | [Adafruit](https://www.adafruit.com/product/5813){:target="_blank"} | $200.00 |
+| Raspberry Pi | 1 | **PI 5 ACTIVE COOLER** (not strictly necessary, but recommended) | [Adafruit](https://www.adafruit.com/product/5815){:target="_blank"} | $13.50 |
+| KEYESTUDIO | 1 | **RESPEAKER 2-MIC PI HAT V1.0** or USB soundcard, speaker, and mic as mentioned [above](#audio) | [Amazon](https://www.amazon.com/dp/B07H3T8SQY){:target="_blank"} | $11.99 |
+| CQRobot | 1 | **3W 4OHM SPEAKER** | [Amazon](https://www.amazon.com/dp/B0822Z4LPH){:target="_blank"} | $3.99 |
+
+You'll also need:
+* A power-smoothing system-either our own [super cap board](#power) or a pass-through USB power bank such as [this one](https://www.amazon.com/Anker-Power-Built-Retractable-USB-C/dp/B0DGKWTQQC){:target="_blank"}. **Note:** using the power bank avoids much of the complexity of a super capacitor bank but it also breaks the direct connection between cranking and powering the Pi. You most likely will not be able to feel much difference in the resistance the crank offers in response to increased or decreased computational load.
+* [Optional] An enclosure ([here's ours](https://github.com/squeezlabs/crankgpt_diy/tree/main/cad){:target="_blank"})
 
 Then set up the software:
 
-* Flash a [DietPi](https://dietpi.com/){:target="_blank"} image (their docs cover this well), then drop our [`dietpi.txt`](https://github.com/squeezlabs/handcrank/blob/main/dietpi/dietpi.txt){:target="_blank"}—tuned for a minimal, offline, fast-booting box—onto the boot partition before first boot; it disables Wi-Fi and sets sensible defaults (you'll want to adjust the static IP / network block to match your own network). Boot your pi with this sd card.
+* Flash a [DietPi](https://dietpi.com/){:target="_blank"} image (their docs cover this well), then drop our [`dietpi.txt`](https://github.com/squeezlabs/crankgpt_diy/tree/main/dietpi/dietpi.txt){:target="_blank"}—tuned for a minimal, offline, fast-booting box—onto the boot partition before first boot; it disables Wi-Fi and sets sensible defaults (you'll want to adjust the static IP / network block to match your own network). Boot your pi with this sd card.
 * Once it's booted, ssh into the pi, turn off Bluetooth in `dietpi-config` and enable the soundcard.
 * If you're using the KEYESTUDIO ReSpeaker 2-Mic Pi HAT, you'll need the WM8960 driver, which can be a bit fiddly to get working on current kernels. Here's what worked for us, using [HinTak's actively maintained seeed-voicecard fork](https://github.com/HinTak/seeed-voicecard){:target="_blank"} (match the `-b` branch and the `linux-headers` package to your kernel version):
 
@@ -198,7 +218,7 @@ cmake --build build --config Release -j$(nproc)
 cd /root/dev
 git clone https://github.com/ktomanek/edge_voice_agent.git
 ```
-* Have both the llama.cpp server (serving your chosen LLM) and the voice agent launch on boot via `dietpi-autostart` (Custom script). Our [`startup_script.sh`](https://github.com/squeezlabs/handcrank/blob/main/dietpi/startup_script.sh){:target="_blank"} does exactly this. Optionally adjust your model paths and copy it to `/var/lib/dietpi/dietpi-autostart/custom.sh`.
+* Have both the llama.cpp server (serving your chosen LLM) and the voice agent launch on boot via `dietpi-autostart` (Custom script). Our [`startup_script.sh`](https://github.com/squeezlabs/crankgpt_diy/tree/main/dietpi/startup_script.sh){:target="_blank"} does exactly this. Optionally adjust your model paths and copy it to `/var/lib/dietpi/dietpi-autostart/custom.sh`.
 
 The voice agent ships with scripts to get you running with a sensible set of default models, but you can swap any of them out (see the voice agent repo for instructions). It's model-agnostic, so adjust models as your hardware allows. On beefier hardware (e.g. a Jetson rather than a Pi) you can swap in larger models; just know you'll likely need a bigger crank and a modified power board.
 
